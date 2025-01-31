@@ -12,5 +12,22 @@
         <input type="email" name="email" id=""/>
         <button type="submit">Enter</button>
     </form>
+    Points des clubs:
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Club</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for current_club in clubs %}
+            <tr>
+                <td>{{current_club['name']}}</td>
+                <td>{{current_club['points']}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
