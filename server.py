@@ -31,7 +31,7 @@ def showSummary():
     club = next((club for club in clubs if club['email'] == email), None)
     
     if club:  # Si un club avec cet email a été trouvé
-        return render_template('welcome.html', club=club, competitions=competitions)
+        return render_template('welcome.html',club=club, clubs=clubs, competitions=competitions)
     else:
         flash("Désolé, cet email n'est pas reconnu!")
         return redirect(url_for('index'))
