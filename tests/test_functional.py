@@ -1,7 +1,7 @@
 from server import app, loadClubs, loadCompetitions
 import pytest
 
-class Tests():
+class TestFunctional():
 
     '''
     Permet de simuler un serveur 
@@ -58,22 +58,45 @@ class Tests():
         clubs = test_club['clubs']
         competitions = test_competition['competitions']
         yield
-    
-    #Tests unitaires
-    def test_load_clubs(self):
-        test_club = loadClubs()
-        assert isinstance(test_club, list)
 
-        for club in test_club:
-            assert 'name' in club
-            assert 'email' in club
-            assert 'points' in club
+        #Tests fonctionnels
+    def test_purchase_negative_places(self, client, test_club, test_competition):
+        response = client.post('/purchasePlaces', data={
+            'club': "Iron Temple",
+            'competition': "Spring Festival",
+            'places': -1
+        })
+        assert response.status_code == 400
 
-    def test_load_competitions(self):
-            test_competition = loadCompetitions()
-            assert isinstance(test_competition, list)
+    def test_purchase_too_many_places(self, client, test_club, test_competition):
+        response = client.post('/purchasePlaces', data={
+            'club': "Simply Lift",
+            'competition': "Spring Festival",
+            'places': 13
+        })
+        assert response.status_code == 400
 
-            for comp in test_competition:
-                assert 'name' in comp
-                assert 'date' in comp
-                assert 'numberOfPlaces' in comp
+    def test_purchase_insufficient_points(self, client, test_club, test_competition):
+        response = client.post('/purchasePlaces', data={
+            'club': "Iron Temple",
+            'competition': "Spring Festival",
+            'places': 5
+        })
+        assert response.status_code == 400
+
+    def test_antidate_booking(self, client, test_club, test_competition):
+        response = client.post('/purchasePlaces', data={
+            'club': "Iron Temple",
+            'competition': "Fall Classic",
+            'places': 5
+        })
+        assert response.status_code == 200
+
+    def test_wrong_email(self, client, test_club, test_competition):
+        response = client.post('/showSummary', data={
+            "email" : "root@root.fr"
+        })
+
+        assert response.status_code == 302
+
+ 
